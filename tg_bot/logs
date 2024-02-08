@@ -1,0 +1,23 @@
+ 2024-02-08 20:49:14,862 - DEBUG - Using selector: EpollSelector
+ 2024-02-08 20:49:14,862 - INFO - Start polling
+ 2024-02-08 20:50:09,279 - WARNING - Received SIGINT signal
+ 2024-02-08 20:50:09,279 - INFO - Polling stopped
+ 2024-02-08 20:50:12,958 - DEBUG - Using selector: EpollSelector
+ 2024-02-08 20:50:12,959 - INFO - Start polling
+ 2024-02-08 20:50:13,144 - INFO - Run polling for bot @test_case_django_bot id=6944068222 - 'django_bot'
+ 2024-02-08 20:50:13,226 - INFO - Update id=659717439 is handled. Duration 3 ms by bot id=6944068222
+ 2024-02-08 20:50:13,226 - INFO - Update id=659717440 is handled. Duration 3 ms by bot id=6944068222
+ 2024-02-08 20:50:13,490 - INFO - Update id=659717441 is handled. Duration 267 ms by bot id=6944068222
+ 2024-02-08 20:50:13,514 - INFO - Update id=659717438 is handled. Duration 291 ms by bot id=6944068222
+ 2024-02-08 20:50:13,543 - INFO - Update id=659717437 is handled. Duration 320 ms by bot id=6944068222
+ 2024-02-08 20:50:19,926 - INFO - Update id=659717442 is handled. Duration 91 ms by bot id=6944068222
+ 2024-02-08 20:50:21,349 - INFO - Update id=659717443 is handled. Duration 0 ms by bot id=6944068222
+ 2024-02-08 20:50:24,297 - INFO - Update id=659717444 is handled. Duration 0 ms by bot id=6944068222
+ 2024-02-08 20:50:32,250 - INFO - Update id=659717445 is handled. Duration 0 ms by bot id=6944068222
+ 2024-02-08 20:50:39,540 - INFO - Update id=659717446 is handled. Duration 269 ms by bot id=6944068222
+ 2024-02-08 20:50:41,262 - INFO - Update id=659717447 is not handled. Duration 0 ms by bot id=6944068222
+ 2024-02-08 20:51:03,560 - INFO - Update id=659717448 is not handled. Duration 0 ms by bot id=6944068222
+ 2024-02-08 20:51:05,451 - INFO - Update id=659717449 is not handled. Duration 0 ms by bot id=6944068222
+ 2024-02-08 20:51:12,953 - WARNING - Received SIGINT signal
+ 2024-02-08 20:51:12,954 - INFO - Polling stopped for bot @test_case_django_bot id=6944068222 - 'django_bot'
+ 2024-02-08 20:51:12,954 - INFO - Polling stopped
