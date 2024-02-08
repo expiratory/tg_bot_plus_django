@@ -4,11 +4,30 @@ from aiogram import Bot, Dispatcher, Router, F, types
 from aiogram.filters.command import Command
 from os import getenv
 from dotenv import load_dotenv, find_dotenv
-from aiogram.utils.keyboard import InlineKeyboardBuilder
+from aiogram.utils.keyboard import InlineKeyboardMarkup, InlineKeyboardButton
+import psycopg2
 
 load_dotenv(find_dotenv())
 
-logging.basicConfig(level=logging.DEBUG, filename='logs', format=' %(asctime)s - %(levelname)s - %(message)s')
+
+def connect_to_db():
+    conn = psycopg2.connect(
+        dbname=getenv('POSTGRES_DB'),
+        user=getenv('POSTGRES_USER'),
+        password=getenv('POSTGRES_PASSWORD'),
+        host=getenv('POSTGRES_HOST')
+    )
+    cursor = conn.cursor()
+    return cursor, conn
+
+
+def close_db(cursor, conn):
+    cursor.close()
+    conn.close()
+
+
+# logging.basicConfig(level=logging.DEBUG, filename='logs', format=' %(asctime)s - %(levelname)s - %(message)s')  # prod
+logging.basicConfig(level=logging.INFO)  # dev
 
 bot = Bot(token=getenv('BOT_TOKEN'))
 
@@ -69,74 +88,38 @@ async def catalog(message: types.Message):
     await categories(message)
 
 
-@dp.message(F.text.lower() == "корзина")
-async def cart(message: types.Message):
-    pass
-
-
-@dp.message(F.text.lower() == "faq")
-async def faq(message: types.Message):
-    pass
+# @dp.message(F.text.lower() == "корзина")
+# async def cart(message: types.Message):
+#     pass
+#
+#
+# @dp.message(F.text.lower() == "faq")
+# async def faq(message: types.Message):
+#     pass
 
 
 async def categories(message: types.Message):
-    builder = InlineKeyboardBuilder()
-    builder.add(types.InlineKeyboardButton(
-        text="Одежда",
-        callback_data="clothes")
-    )
-    builder.add(types.InlineKeyboardButton(
-        text="Обувь",
-        callback_data="shoes")
-    )
+    cursor, conn = connect_to_db()
+    cursor.execute('SELECT id, name FROM public.categories_category')
+    records = cursor.fetchall()
+    close_db(cursor, conn)
+
+    buttons_list = []
+    for item in records:
+        buttons_list.append([types.InlineKeyboardButton(
+            text=item[1],
+            callback_data=f'Категория {str(item[0])}')]
+        )
+    kb = types.InlineKeyboardMarkup(inline_keyboard=buttons_list)
     await message.answer(
         "Нажмите на кнопку, чтобы перейти к подкатегории",
-        reply_markup=builder.as_markup()
+        reply_markup=kb
     )
 
 
 @dp.callback_query(F.data == "clothes")
 async def open_clothes(callback: types.CallbackQuery):
     await callback.answer()
-    await clothes(callback.message)
-
-
-@dp.callback_query(F.data == "shoes")
-async def open_shoes(callback: types.CallbackQuery):
-    await callback.answer()
-    await shoes(callback.message)
-
-
-async def clothes(message: types.Message):
-    builder = InlineKeyboardBuilder()
-    builder.add(types.InlineKeyboardButton(
-        text="Футболки",
-        callback_data="t_shirts")
-    )
-    builder.add(types.InlineKeyboardButton(
-        text="Джинсы",
-        callback_data="jeans")
-    )
-    await message.answer(
-        "Нажмите на кнопку, чтобы перейти к товарам",
-        reply_markup=builder.as_markup()
-    )
-
-
-async def shoes(message: types.Message):
-    builder = InlineKeyboardBuilder()
-    builder.add(types.InlineKeyboardButton(
-        text="Кроссовки",
-        callback_data="sneakers")
-    )
-    builder.add(types.InlineKeyboardButton(
-        text="Сапоги",
-        callback_data="boots")
-    )
-    await message.answer(
-        "Нажмите на кнопку, чтобы перейти к товарам",
-        reply_markup=builder.as_markup()
-    )
 
 
 async def main():

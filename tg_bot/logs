@@ -21,3 +21,445 @@
  2024-02-08 20:51:12,953 - WARNING - Received SIGINT signal
  2024-02-08 20:51:12,954 - INFO - Polling stopped for bot @test_case_django_bot id=6944068222 - 'django_bot'
  2024-02-08 20:51:12,954 - INFO - Polling stopped
+ 2024-02-08 21:05:34,938 - DEBUG - Using selector: EpollSelector
+ 2024-02-08 21:05:34,939 - INFO - Start polling
+ 2024-02-08 21:05:35,126 - INFO - Run polling for bot @test_case_django_bot id=6944068222 - 'django_bot'
+ 2024-02-08 21:06:05,856 - WARNING - Received SIGINT signal
+ 2024-02-08 21:06:05,856 - INFO - Polling stopped for bot @test_case_django_bot id=6944068222 - 'django_bot'
+ 2024-02-08 21:06:05,856 - INFO - Polling stopped
+ 2024-02-08 21:12:35,839 - DEBUG - Using selector: EpollSelector
+ 2024-02-08 21:12:35,839 - INFO - Start polling
+ 2024-02-08 21:12:36,016 - INFO - Run polling for bot @test_case_django_bot id=6944068222 - 'django_bot'
+ 2024-02-08 21:12:37,738 - WARNING - Received SIGINT signal
+ 2024-02-08 21:12:37,738 - INFO - Polling stopped for bot @test_case_django_bot id=6944068222 - 'django_bot'
+ 2024-02-08 21:12:37,738 - INFO - Polling stopped
+ 2024-02-08 21:24:21,163 - DEBUG - Using selector: EpollSelector
+ 2024-02-08 21:24:21,164 - INFO - Start polling
+ 2024-02-08 21:24:21,350 - INFO - Run polling for bot @test_case_django_bot id=6944068222 - 'django_bot'
+ 2024-02-08 21:24:30,881 - INFO - Update id=659717450 is handled. Duration 315 ms by bot id=6944068222
+ 2024-02-08 21:24:44,739 - WARNING - Received SIGINT signal
+ 2024-02-08 21:24:44,740 - INFO - Polling stopped for bot @test_case_django_bot id=6944068222 - 'django_bot'
+ 2024-02-08 21:24:44,740 - INFO - Polling stopped
+ 2024-02-08 21:25:16,440 - DEBUG - Using selector: EpollSelector
+ 2024-02-08 21:25:16,441 - INFO - Start polling
+ 2024-02-08 21:25:16,623 - INFO - Run polling for bot @test_case_django_bot id=6944068222 - 'django_bot'
+ 2024-02-08 21:25:17,996 - INFO - Update id=659717451 is not handled. Duration 2 ms by bot id=6944068222
+ 2024-02-08 21:25:17,996 - ERROR - Cause exception while process update id=659717451 by bot id=6944068222
+ValidationError: 2 validation errors for InlineKeyboardButton
+text
+  Input should be a valid string [type=string_type, input_value=('Одежда',), input_type=tuple]
+    For further information visit https://errors.pydantic.dev/2.5/v/string_type
+callback_data
+  Input should be a valid string [type=string_type, input_value=('Одежда',), input_type=tuple]
+    For further information visit https://errors.pydantic.dev/2.5/v/string_type
+Traceback (most recent call last):
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/dispatcher.py", line 309, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/dispatcher.py", line 158, in feed_update
+    response = await self.update.wrap_outer_middleware(
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/middlewares/error.py", line 25, in __call__
+    return await handler(event, data)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/middlewares/user_context.py", line 27, in __call__
+    return await handler(event, data)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/fsm/middleware.py", line 41, in __call__
+    return await handler(event, data)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/event/telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/dispatcher.py", line 276, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/router.py", line 128, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/router.py", line 123, in _wrapped
+    return await self._propagate_event(
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/router.py", line 148, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/event/telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/tg_bot/bot.py", line 81, in catalog
+    await categories(message)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/tg_bot/bot.py", line 101, in categories
+    builder.add(types.InlineKeyboardButton(
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/pydantic/main.py", line 164, in __init__
+    __pydantic_self__.__pydantic_validator__.validate_python(data, self_instance=__pydantic_self__)
+pydantic_core._pydantic_core.ValidationError: 2 validation errors for InlineKeyboardButton
+text
+  Input should be a valid string [type=string_type, input_value=('Одежда',), input_type=tuple]
+    For further information visit https://errors.pydantic.dev/2.5/v/string_type
+callback_data
+  Input should be a valid string [type=string_type, input_value=('Одежда',), input_type=tuple]
+    For further information visit https://errors.pydantic.dev/2.5/v/string_type
+ 2024-02-08 21:25:21,485 - INFO - Update id=659717452 is not handled. Duration 1 ms by bot id=6944068222
+ 2024-02-08 21:25:21,486 - ERROR - Cause exception while process update id=659717452 by bot id=6944068222
+ValidationError: 2 validation errors for InlineKeyboardButton
+text
+  Input should be a valid string [type=string_type, input_value=('Одежда',), input_type=tuple]
+    For further information visit https://errors.pydantic.dev/2.5/v/string_type
+callback_data
+  Input should be a valid string [type=string_type, input_value=('Одежда',), input_type=tuple]
+    For further information visit https://errors.pydantic.dev/2.5/v/string_type
+Traceback (most recent call last):
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/dispatcher.py", line 309, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/dispatcher.py", line 158, in feed_update
+    response = await self.update.wrap_outer_middleware(
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/middlewares/error.py", line 25, in __call__
+    return await handler(event, data)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/middlewares/user_context.py", line 27, in __call__
+    return await handler(event, data)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/fsm/middleware.py", line 41, in __call__
+    return await handler(event, data)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/event/telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/dispatcher.py", line 276, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/router.py", line 128, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/router.py", line 123, in _wrapped
+    return await self._propagate_event(
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/router.py", line 148, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/event/telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/tg_bot/bot.py", line 81, in catalog
+    await categories(message)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/tg_bot/bot.py", line 101, in categories
+    builder.add(types.InlineKeyboardButton(
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/pydantic/main.py", line 164, in __init__
+    __pydantic_self__.__pydantic_validator__.validate_python(data, self_instance=__pydantic_self__)
+pydantic_core._pydantic_core.ValidationError: 2 validation errors for InlineKeyboardButton
+text
+  Input should be a valid string [type=string_type, input_value=('Одежда',), input_type=tuple]
+    For further information visit https://errors.pydantic.dev/2.5/v/string_type
+callback_data
+  Input should be a valid string [type=string_type, input_value=('Одежда',), input_type=tuple]
+    For further information visit https://errors.pydantic.dev/2.5/v/string_type
+ 2024-02-08 21:25:26,382 - INFO - Update id=659717453 is not handled. Duration 1 ms by bot id=6944068222
+ 2024-02-08 21:25:26,382 - ERROR - Cause exception while process update id=659717453 by bot id=6944068222
+ValidationError: 2 validation errors for InlineKeyboardButton
+text
+  Input should be a valid string [type=string_type, input_value=('Одежда',), input_type=tuple]
+    For further information visit https://errors.pydantic.dev/2.5/v/string_type
+callback_data
+  Input should be a valid string [type=string_type, input_value=('Одежда',), input_type=tuple]
+    For further information visit https://errors.pydantic.dev/2.5/v/string_type
+Traceback (most recent call last):
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/dispatcher.py", line 309, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/dispatcher.py", line 158, in feed_update
+    response = await self.update.wrap_outer_middleware(
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/middlewares/error.py", line 25, in __call__
+    return await handler(event, data)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/middlewares/user_context.py", line 27, in __call__
+    return await handler(event, data)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/fsm/middleware.py", line 41, in __call__
+    return await handler(event, data)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/event/telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/dispatcher.py", line 276, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/router.py", line 128, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/router.py", line 123, in _wrapped
+    return await self._propagate_event(
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/router.py", line 148, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/event/telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/tg_bot/bot.py", line 81, in catalog
+    await categories(message)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/tg_bot/bot.py", line 101, in categories
+    builder.add(types.InlineKeyboardButton(
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/pydantic/main.py", line 164, in __init__
+    __pydantic_self__.__pydantic_validator__.validate_python(data, self_instance=__pydantic_self__)
+pydantic_core._pydantic_core.ValidationError: 2 validation errors for InlineKeyboardButton
+text
+  Input should be a valid string [type=string_type, input_value=('Одежда',), input_type=tuple]
+    For further information visit https://errors.pydantic.dev/2.5/v/string_type
+callback_data
+  Input should be a valid string [type=string_type, input_value=('Одежда',), input_type=tuple]
+    For further information visit https://errors.pydantic.dev/2.5/v/string_type
+ 2024-02-08 21:25:56,844 - WARNING - Received SIGINT signal
+ 2024-02-08 21:25:56,845 - INFO - Polling stopped for bot @test_case_django_bot id=6944068222 - 'django_bot'
+ 2024-02-08 21:25:56,845 - INFO - Polling stopped
+ 2024-02-08 21:26:14,025 - DEBUG - Using selector: EpollSelector
+ 2024-02-08 21:26:14,025 - INFO - Start polling
+ 2024-02-08 21:26:14,209 - INFO - Run polling for bot @test_case_django_bot id=6944068222 - 'django_bot'
+ 2024-02-08 21:26:17,242 - INFO - Update id=659717454 is handled. Duration 237 ms by bot id=6944068222
+ 2024-02-08 21:26:24,777 - WARNING - Received SIGINT signal
+ 2024-02-08 21:26:24,778 - INFO - Polling stopped for bot @test_case_django_bot id=6944068222 - 'django_bot'
+ 2024-02-08 21:26:24,778 - INFO - Polling stopped
+ 2024-02-08 22:35:07,098 - DEBUG - Using selector: EpollSelector
+ 2024-02-08 22:35:07,098 - INFO - Start polling
+ 2024-02-08 22:35:07,275 - INFO - Run polling for bot @test_case_django_bot id=6944068222 - 'django_bot'
+ 2024-02-08 22:35:11,255 - INFO - Update id=659717455 is not handled. Duration 0 ms by bot id=6944068222
+ 2024-02-08 22:35:11,255 - ERROR - Cause exception while process update id=659717455 by bot id=6944068222
+ValidationError: 1 validation error for InlineKeyboardMarkup
+inline_keyboard
+  Field required [type=missing, input_value={'row_width': 3}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+Traceback (most recent call last):
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/dispatcher.py", line 309, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/dispatcher.py", line 158, in feed_update
+    response = await self.update.wrap_outer_middleware(
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/middlewares/error.py", line 25, in __call__
+    return await handler(event, data)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/middlewares/user_context.py", line 27, in __call__
+    return await handler(event, data)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/fsm/middleware.py", line 41, in __call__
+    return await handler(event, data)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/event/telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/dispatcher.py", line 276, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/router.py", line 128, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/router.py", line 123, in _wrapped
+    return await self._propagate_event(
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/router.py", line 148, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/event/telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/tg_bot/bot.py", line 82, in catalog
+    await categories(message)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/tg_bot/bot.py", line 136, in categories
+    create_paginated_keyboard(1, 10)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/tg_bot/bot.py", line 96, in create_paginated_keyboard
+    keyboard = InlineKeyboardMarkup(row_width=3)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/pydantic/main.py", line 164, in __init__
+    __pydantic_self__.__pydantic_validator__.validate_python(data, self_instance=__pydantic_self__)
+pydantic_core._pydantic_core.ValidationError: 1 validation error for InlineKeyboardMarkup
+inline_keyboard
+  Field required [type=missing, input_value={'row_width': 3}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+ 2024-02-08 22:35:40,567 - WARNING - Received SIGINT signal
+ 2024-02-08 22:35:40,568 - INFO - Polling stopped for bot @test_case_django_bot id=6944068222 - 'django_bot'
+ 2024-02-08 22:35:40,568 - INFO - Polling stopped
+ 2024-02-08 22:42:11,981 - DEBUG - Using selector: EpollSelector
+ 2024-02-08 22:42:11,982 - INFO - Start polling
+ 2024-02-08 22:42:12,165 - INFO - Run polling for bot @test_case_django_bot id=6944068222 - 'django_bot'
+ 2024-02-08 22:42:15,158 - WARNING - Received SIGINT signal
+ 2024-02-08 22:42:15,159 - INFO - Polling stopped for bot @test_case_django_bot id=6944068222 - 'django_bot'
+ 2024-02-08 22:42:15,159 - INFO - Polling stopped
+ 2024-02-08 22:42:17,117 - DEBUG - Using selector: EpollSelector
+ 2024-02-08 22:42:17,118 - INFO - Start polling
+ 2024-02-08 22:42:17,300 - INFO - Run polling for bot @test_case_django_bot id=6944068222 - 'django_bot'
+ 2024-02-08 22:42:36,891 - WARNING - Received SIGINT signal
+ 2024-02-08 22:42:36,891 - INFO - Polling stopped for bot @test_case_django_bot id=6944068222 - 'django_bot'
+ 2024-02-08 22:42:36,892 - INFO - Polling stopped
+ 2024-02-08 22:42:38,796 - DEBUG - Using selector: EpollSelector
+ 2024-02-08 22:42:38,797 - INFO - Start polling
+ 2024-02-08 22:42:38,967 - INFO - Run polling for bot @test_case_django_bot id=6944068222 - 'django_bot'
+ 2024-02-08 22:43:29,800 - WARNING - Received SIGINT signal
+ 2024-02-08 22:43:29,801 - INFO - Polling stopped for bot @test_case_django_bot id=6944068222 - 'django_bot'
+ 2024-02-08 22:43:29,801 - INFO - Polling stopped
+ 2024-02-08 22:43:31,815 - DEBUG - Using selector: EpollSelector
+ 2024-02-08 22:43:31,815 - INFO - Start polling
+ 2024-02-08 22:43:32,004 - INFO - Run polling for bot @test_case_django_bot id=6944068222 - 'django_bot'
+ 2024-02-08 22:43:56,435 - INFO - Update id=659717456 is not handled. Duration 2 ms by bot id=6944068222
+ 2024-02-08 22:43:56,435 - ERROR - Cause exception while process update id=659717456 by bot id=6944068222
+ValidationError: 1 validation error for InlineKeyboardMarkup
+inline_keyboard
+  Field required [type=missing, input_value={'row_width': 1}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+Traceback (most recent call last):
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/dispatcher.py", line 309, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/dispatcher.py", line 158, in feed_update
+    response = await self.update.wrap_outer_middleware(
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/middlewares/error.py", line 25, in __call__
+    return await handler(event, data)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/middlewares/user_context.py", line 27, in __call__
+    return await handler(event, data)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/fsm/middleware.py", line 41, in __call__
+    return await handler(event, data)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/event/telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/dispatcher.py", line 276, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/router.py", line 128, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/router.py", line 123, in _wrapped
+    return await self._propagate_event(
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/router.py", line 148, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/event/telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/tg_bot/bot.py", line 82, in catalog
+    await categories(message)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/tg_bot/bot.py", line 117, in categories
+    await message.reply("Привет! Вот пагинированная клавиатура с вашими объектами:", reply_markup=generate_keyboard(1, records))
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/tg_bot/bot.py", line 97, in generate_keyboard
+    keyboard = InlineKeyboardMarkup(row_width=1)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/pydantic/main.py", line 164, in __init__
+    __pydantic_self__.__pydantic_validator__.validate_python(data, self_instance=__pydantic_self__)
+pydantic_core._pydantic_core.ValidationError: 1 validation error for InlineKeyboardMarkup
+inline_keyboard
+  Field required [type=missing, input_value={'row_width': 1}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+ 2024-02-08 22:46:08,411 - INFO - Update id=659717457 is not handled. Duration 1 ms by bot id=6944068222
+ 2024-02-08 22:46:08,411 - ERROR - Cause exception while process update id=659717457 by bot id=6944068222
+ValidationError: 1 validation error for InlineKeyboardMarkup
+inline_keyboard
+  Field required [type=missing, input_value={'row_width': 1}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+Traceback (most recent call last):
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/dispatcher.py", line 309, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/dispatcher.py", line 158, in feed_update
+    response = await self.update.wrap_outer_middleware(
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/middlewares/error.py", line 25, in __call__
+    return await handler(event, data)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/middlewares/user_context.py", line 27, in __call__
+    return await handler(event, data)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/fsm/middleware.py", line 41, in __call__
+    return await handler(event, data)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/event/telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/dispatcher.py", line 276, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/router.py", line 128, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/router.py", line 123, in _wrapped
+    return await self._propagate_event(
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/router.py", line 148, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/event/telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/tg_bot/bot.py", line 82, in catalog
+    await categories(message)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/tg_bot/bot.py", line 117, in categories
+    await message.reply("Привет! Вот пагинированная клавиатура с вашими объектами:", reply_markup=generate_keyboard(1, records))
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/tg_bot/bot.py", line 97, in generate_keyboard
+    keyboard = InlineKeyboardMarkup(row_width=1)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/pydantic/main.py", line 164, in __init__
+    __pydantic_self__.__pydantic_validator__.validate_python(data, self_instance=__pydantic_self__)
+pydantic_core._pydantic_core.ValidationError: 1 validation error for InlineKeyboardMarkup
+inline_keyboard
+  Field required [type=missing, input_value={'row_width': 1}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.5/v/missing
+ 2024-02-08 22:47:48,777 - WARNING - Received SIGINT signal
+ 2024-02-08 22:47:48,778 - INFO - Polling stopped for bot @test_case_django_bot id=6944068222 - 'django_bot'
+ 2024-02-08 22:47:48,778 - INFO - Polling stopped
+ 2024-02-08 23:45:14,766 - DEBUG - Using selector: EpollSelector
+ 2024-02-08 23:45:14,766 - INFO - Start polling
+ 2024-02-08 23:45:14,945 - INFO - Run polling for bot @test_case_django_bot id=6944068222 - 'django_bot'
+ 2024-02-08 23:45:32,574 - INFO - Update id=659717458 is handled. Duration 203 ms by bot id=6944068222
+ 2024-02-08 23:45:38,050 - WARNING - Received SIGINT signal
+ 2024-02-08 23:45:38,051 - INFO - Polling stopped for bot @test_case_django_bot id=6944068222 - 'django_bot'
+ 2024-02-08 23:45:38,051 - INFO - Polling stopped
+ 2024-02-08 23:50:51,942 - DEBUG - Using selector: EpollSelector
+ 2024-02-08 23:50:51,942 - INFO - Start polling
+ 2024-02-08 23:50:52,120 - INFO - Run polling for bot @test_case_django_bot id=6944068222 - 'django_bot'
+ 2024-02-08 23:50:58,346 - INFO - Update id=659717459 is not handled. Duration 2 ms by bot id=6944068222
+ 2024-02-08 23:50:58,346 - ERROR - Cause exception while process update id=659717459 by bot id=6944068222
+NameError: name 'builder' is not defined
+Traceback (most recent call last):
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/dispatcher.py", line 309, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/dispatcher.py", line 158, in feed_update
+    response = await self.update.wrap_outer_middleware(
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/middlewares/error.py", line 25, in __call__
+    return await handler(event, data)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/middlewares/user_context.py", line 27, in __call__
+    return await handler(event, data)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/fsm/middleware.py", line 41, in __call__
+    return await handler(event, data)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/event/telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/dispatcher.py", line 276, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/router.py", line 128, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/router.py", line 123, in _wrapped
+    return await self._propagate_event(
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/router.py", line 148, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/event/telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/tg_bot/bot.py", line 82, in catalog
+    await categories(message)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/tg_bot/bot.py", line 107, in categories
+    reply_markup=builder.as_markup()
+NameError: name 'builder' is not defined
+ 2024-02-08 23:51:04,451 - INFO - Update id=659717460 is not handled. Duration 1 ms by bot id=6944068222
+ 2024-02-08 23:51:04,451 - ERROR - Cause exception while process update id=659717460 by bot id=6944068222
+NameError: name 'builder' is not defined
+Traceback (most recent call last):
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/dispatcher.py", line 309, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/dispatcher.py", line 158, in feed_update
+    response = await self.update.wrap_outer_middleware(
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/middlewares/error.py", line 25, in __call__
+    return await handler(event, data)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/middlewares/user_context.py", line 27, in __call__
+    return await handler(event, data)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/fsm/middleware.py", line 41, in __call__
+    return await handler(event, data)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/event/telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/dispatcher.py", line 276, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/router.py", line 128, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/router.py", line 123, in _wrapped
+    return await self._propagate_event(
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/router.py", line 148, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/event/telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/.venv/lib/python3.10/site-packages/aiogram/dispatcher/event/handler.py", line 43, in call
+    return await wrapped()
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/tg_bot/bot.py", line 82, in catalog
+    await categories(message)
+  File "/home/alexandr/PycharmProjects/tg_bot_plus_django/tg_bot/bot.py", line 107, in categories
+    reply_markup=builder.as_markup()
+NameError: name 'builder' is not defined
+ 2024-02-08 23:51:32,808 - WARNING - Received SIGINT signal
+ 2024-02-08 23:51:32,808 - INFO - Polling stopped for bot @test_case_django_bot id=6944068222 - 'django_bot'
+ 2024-02-08 23:51:32,808 - INFO - Polling stopped
+ 2024-02-08 23:51:36,372 - DEBUG - Using selector: EpollSelector
+ 2024-02-08 23:51:36,372 - INFO - Start polling
+ 2024-02-08 23:51:36,546 - INFO - Run polling for bot @test_case_django_bot id=6944068222 - 'django_bot'
+ 2024-02-08 23:51:53,868 - INFO - Update id=659717461 is handled. Duration 255 ms by bot id=6944068222
+ 2024-02-08 23:52:36,179 - INFO - Update id=659717462 is handled. Duration 223 ms by bot id=6944068222
+ 2024-02-08 23:52:39,240 - WARNING - Received SIGINT signal
+ 2024-02-08 23:52:39,240 - INFO - Polling stopped for bot @test_case_django_bot id=6944068222 - 'django_bot'
+ 2024-02-08 23:52:39,241 - INFO - Polling stopped
+ 2024-02-08 23:53:28,740 - DEBUG - Using selector: EpollSelector
+ 2024-02-08 23:53:28,740 - INFO - Start polling
+ 2024-02-08 23:53:28,928 - INFO - Run polling for bot @test_case_django_bot id=6944068222 - 'django_bot'
+ 2024-02-08 23:53:34,968 - INFO - Update id=659717463 is handled. Duration 206 ms by bot id=6944068222
+ 2024-02-08 23:54:24,529 - WARNING - Received SIGINT signal
+ 2024-02-08 23:54:24,529 - INFO - Polling stopped for bot @test_case_django_bot id=6944068222 - 'django_bot'
+ 2024-02-08 23:54:24,529 - INFO - Polling stopped
