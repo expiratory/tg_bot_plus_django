@@ -87,17 +87,57 @@ async def menu(message: types.Message):
     )
     await message.answer("Куда вы хотите перейти?", reply_markup=keyboard)
 
+async def get_or_create_user_cart(user_name):
+    cursor, conn = await connect_to_db()
+
+    cursor.execute(
+        f"SELECT * FROM public.user_user WHERE user_tg_nickname = '{user_name}'")
+    user_records = cursor.fetchall()
+
+    if len(user_records) == 0:
+        cursor.execute(
+            f"INSERT INTO public.user_user (user_tg_nickname) values ('{user_name}')"
+        )
+        conn.commit()
+        cursor.execute(
+            f"SELECT * FROM public.user_user WHERE user_tg_nickname = '{user_name}'")
+        user_records = cursor.fetchall()
+
+    bd_user_id = user_records[0][0]
+
+    cursor.execute(
+        f"SELECT * FROM public.cart_cart WHERE user_id = {bd_user_id}")
+    user_cart_records = cursor.fetchall()
+
+    if len(user_cart_records) == 0:
+        cursor.execute(
+            f"INSERT INTO public.cart_cart (user_id) values ('{bd_user_id}')"
+        )
+        conn.commit()
+        cursor.execute(
+            f"SELECT * FROM public.cart_cart WHERE user_id = {bd_user_id}")
+        user_cart_records = cursor.fetchall()
+
+    await close_db(cursor, conn)
+
+    return user_cart_records
+
 
 @dp.message(F.text.lower() == "каталог")
 async def catalog(message: types.Message):
     await categories(message)
 
 
-# @dp.message(F.text.lower() == "корзина")
-# async def cart(message: types.Message):
-#     pass
-#
-#
+@dp.message(F.text.lower() == "корзина")
+async def cart(message: types.Message):
+    user_name = message.chat.username
+    user_cart = await get_or_create_user_cart(user_name)
+
+    cursor, conn = await connect_to_db()
+
+    await close_db(cursor, conn)
+
+
 # @dp.message(F.text.lower() == "faq")
 # async def faq(message: types.Message):
 #     pass
@@ -215,17 +255,14 @@ async def add_to_cart(callback: types.CallbackQuery):
     good_id = int(callback.data.split()[1])
     quantity = int(callback.data.split()[2])
     user_name = callback.message.chat.username
+    user_cart = await get_or_create_user_cart(user_name)
+    cart_id = user_cart[0][0]
 
     cursor, conn = await connect_to_db()
     cursor.execute(
-        f"SELECT * FROM public.user_user WHERE user_tg_nickname = '{user_name}'")
-    records = cursor.fetchall()
-
-    if len(records) == 0:
-        print('мы тут')
-        cursor.execute(
-            f"INSERT INTO public.user_user (user_tg_nickname) values('{user_name}')"
-        )
+        f"INSERT INTO public.cart_cartgood (quantity, cart_id, good_id) values ({quantity}, {cart_id}, {good_id})"
+    )
+    conn.commit()
     await close_db(cursor, conn)
 
 
