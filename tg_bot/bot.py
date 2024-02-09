@@ -2,12 +2,15 @@ import asyncio
 import logging
 from aiogram import Bot, Dispatcher, Router, F, types
 from aiogram.filters.command import Command
+from aiogram.types import FSInputFile
 from os import getenv
 from dotenv import load_dotenv, find_dotenv
 from aiogram.utils.keyboard import InlineKeyboardMarkup, InlineKeyboardButton
 import psycopg2
 
 load_dotenv(find_dotenv())
+
+DJANGO_PROJECT_MEDIA_ROOT = getenv('DJANGO_PROJECT_MEDIA_ROOT')
 
 
 def connect_to_db():
@@ -117,9 +120,43 @@ async def categories(message: types.Message):
     )
 
 
-@dp.callback_query(F.data == "clothes")
-async def open_clothes(callback: types.CallbackQuery):
-    await callback.answer()
+@dp.callback_query(F.data.startswith("Категория"))
+async def subcategories(callback: types.CallbackQuery):
+    category_id = int(callback.data.split()[1])
+    cursor, conn = connect_to_db()
+    cursor.execute(f'SELECT id, name FROM public.subcategories_subcategory WHERE category_id = {category_id}')
+    records = cursor.fetchall()
+    close_db(cursor, conn)
+
+    buttons_list = []
+    for item in records:
+        buttons_list.append([types.InlineKeyboardButton(
+            text=item[1],
+            callback_data=f'Подкатегория {str(item[0])}')]
+        )
+    kb = types.InlineKeyboardMarkup(inline_keyboard=buttons_list)
+    await callback.message.edit_text(
+        "Нажмите на кнопку, чтобы перейти к подкатегории",
+        reply_markup=kb
+    )
+
+
+@dp.callback_query(F.data.startswith("Подкатегория"))
+async def goods(callback: types.CallbackQuery):
+    subcategory_id = int(callback.data.split()[1])
+    cursor, conn = connect_to_db()
+    cursor.execute(f'SELECT id, description, image FROM public.goods_good WHERE subcategory_id = {subcategory_id} AND quantity != 0')
+    records = cursor.fetchall()
+    close_db(cursor, conn)
+
+    for item in records:
+        button = [[types.InlineKeyboardButton(
+            text="Добавить в корзину",
+            callback_data=f"Товар {item[0]}"
+        )]]
+        kb = types.InlineKeyboardMarkup(inline_keyboard=button)
+        image = FSInputFile(f"{DJANGO_PROJECT_MEDIA_ROOT}{item[2]}")
+        await bot.send_photo(chat_id=callback.message.chat.id, photo=image, caption=item[1], reply_markup=kb)
 
 
 async def main():
