@@ -7,6 +7,7 @@ from goods.models import Good
 class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
+    post_data = models.TextField(default='')
 
     def __str__(self):
         return str(self.pk)

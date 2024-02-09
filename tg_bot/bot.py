@@ -87,6 +87,7 @@ async def menu(message: types.Message):
     )
     await message.answer("Куда вы хотите перейти?", reply_markup=keyboard)
 
+
 async def get_or_create_user_cart(user_name):
     cursor, conn = await connect_to_db()
 
@@ -128,17 +129,18 @@ async def catalog(message: types.Message):
     await categories(message)
 
 
-@dp.message(F.text.lower() == "корзина")
-async def cart(message: types.Message):
+async def check_cart(message: types.Message):
     user_name = message.chat.username
     user_cart = await get_or_create_user_cart(user_name)
     cart_id = user_cart[0][0]
 
     cursor, conn = await connect_to_db()
     cursor.execute(
-        f"SELECT ccg.id, ccg.quantity, gg.name, gg.price FROM public.cart_cartgood ccg JOIN public.goods_good gg ON ccg.good_id = gg.id WHERE ccg.cart_id = {cart_id}")
+        f"SELECT ccg.id, ccg.quantity, gg.name, gg.price, gg.quantity FROM public.cart_cartgood ccg JOIN public.goods_good gg ON ccg.good_id = gg.id WHERE ccg.cart_id = {cart_id}")
     user_cart_good_records = cursor.fetchall()
     await close_db(cursor, conn)
+
+    cart_good_list = None
 
     if len(user_cart_good_records) != 0:
         cart_good_list = []
@@ -147,19 +149,47 @@ async def cart(message: types.Message):
             cart_good_quantity = item[1]
             good_name = item[2]
             good_price = item[3]
+            good_quantity = item[4]
             result_price = cart_good_quantity * good_price
-            cart_good_list.append([cart_good_id, cart_good_quantity, good_name, good_price, result_price])
+            cart_good_list.append(
+                [cart_good_id, cart_good_quantity, good_name, good_price, result_price, good_quantity])
 
-        info_for_reply = []
+    return cart_good_list
+
+
+@dp.message(F.text.lower() == "корзина")
+async def cart(message: types.Message):
+    cart_good_list = await check_cart(message)
+
+    if cart_good_list is not None:
+        buttons_list = []
+        position = 1
         for item in cart_good_list:
-            info_for_reply.append(f"{item[2]} стоимостью {item[3]} количеством {item[1]} - итого {item[4]}")
-
-        reply_text = f"Ваша корзина: " + ', '.join(info_for_reply)
-
-        await message.answer(text=reply_text)
-
+            info_for_reply = f"{item[2]} стоимостью {item[3]} количеством {item[1]} - итого {item[4]}. У нас в наличии: {item[5]}"
+            delete_cart_good = types.InlineKeyboardButton(
+                text="Удалить из корзины", callback_data=f'Удалить {item[0]}'
+            )
+            buttons_list.append([delete_cart_good])
+            kb = types.InlineKeyboardMarkup(inline_keyboard=[[delete_cart_good]])
+            await message.answer(text=f'Позиция {position}: {info_for_reply}', reply_markup=kb)
+            position += 1
     else:
         await message.answer(text='Ваша корзина пуста')
+
+
+@dp.callback_query(F.data.startswith("Удалить"))
+async def delete_cart_good(callback: types.CallbackQuery):
+    cart_good_id = int(callback.data.split()[1])
+
+    cursor, conn = await connect_to_db()
+    cursor.execute(
+        f"DELETE FROM public.cart_cartgood WHERE id = {cart_good_id}")
+    conn.commit()
+    await close_db(cursor, conn)
+
+    await callback.message.answer(text='Товар успешно удален из корзины. Вот что у вас осталось в корзине:')
+    await cart(callback.message)
+
 
 
 # @dp.message(F.text.lower() == "faq")
@@ -183,7 +213,7 @@ async def categories(message: types.Message):
         )
     kb = types.InlineKeyboardMarkup(inline_keyboard=buttons_list)
     await message.answer(
-        "Нажмите на кнопку, чтобы перейти к подкатегории",
+        "Нажмите на кнопку, чтобы перейти к категории",
         reply_markup=kb
     )
 
