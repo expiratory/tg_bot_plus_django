@@ -132,10 +132,34 @@ async def catalog(message: types.Message):
 async def cart(message: types.Message):
     user_name = message.chat.username
     user_cart = await get_or_create_user_cart(user_name)
+    cart_id = user_cart[0][0]
 
     cursor, conn = await connect_to_db()
-
+    cursor.execute(
+        f"SELECT ccg.id, ccg.quantity, gg.name, gg.price FROM public.cart_cartgood ccg JOIN public.goods_good gg ON ccg.good_id = gg.id WHERE ccg.cart_id = {cart_id}")
+    user_cart_good_records = cursor.fetchall()
     await close_db(cursor, conn)
+
+    if len(user_cart_good_records) != 0:
+        cart_good_list = []
+        for item in user_cart_good_records:
+            cart_good_id = item[0]
+            cart_good_quantity = item[1]
+            good_name = item[2]
+            good_price = item[3]
+            result_price = cart_good_quantity * good_price
+            cart_good_list.append([cart_good_id, cart_good_quantity, good_name, good_price, result_price])
+
+        info_for_reply = []
+        for item in cart_good_list:
+            info_for_reply.append(f"{item[2]} стоимостью {item[3]} количеством {item[1]} - итого {item[4]}")
+
+        reply_text = f"Ваша корзина: " + ', '.join(info_for_reply)
+
+        await message.answer(text=reply_text)
+
+    else:
+        await message.answer(text='Ваша корзина пуста')
 
 
 # @dp.message(F.text.lower() == "faq")
