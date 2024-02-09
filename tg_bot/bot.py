@@ -136,7 +136,8 @@ async def check_cart(message: types.Message):
 
     cursor, conn = await connect_to_db()
     cursor.execute(
-        f"SELECT ccg.id, ccg.quantity, gg.name, gg.price, gg.quantity FROM public.cart_cartgood ccg JOIN public.goods_good gg ON ccg.good_id = gg.id WHERE ccg.cart_id = {cart_id}")
+        f"SELECT ccg.id, ccg.quantity, gg.name, gg.price, gg.quantity FROM public.cart_cartgood ccg JOIN "
+        f"public.goods_good gg ON ccg.good_id = gg.id WHERE ccg.cart_id = {cart_id}")
     user_cart_good_records = cursor.fetchall()
     await close_db(cursor, conn)
 
@@ -164,8 +165,11 @@ async def cart(message: types.Message):
     if cart_good_list is not None:
         buttons_list = []
         position = 1
+        cart_sum = 0
         for item in cart_good_list:
-            info_for_reply = f"{item[2]} стоимостью {item[3]} количеством {item[1]} - итого {item[4]}. У нас в наличии: {item[5]}"
+            cart_sum += item[4]
+            info_for_reply = (f"{item[2]} стоимостью {item[3]} количеством {item[1]} - итого {item[4]}. "
+                              f"У нас в наличии: {item[5]}")
             delete_cart_good = types.InlineKeyboardButton(
                 text="Удалить из корзины", callback_data=f'Удалить {item[0]}'
             )
@@ -173,8 +177,35 @@ async def cart(message: types.Message):
             kb = types.InlineKeyboardMarkup(inline_keyboard=[[delete_cart_good]])
             await message.answer(text=f'Позиция {position}: {info_for_reply}', reply_markup=kb)
             position += 1
+        await message.answer(
+            text=f'Сумма корзины: {cart_sum}. Если вы готовы сделать заказ, введите данные для доставки. '
+                 f'ОБЯЗАТЕЛЬНО начните свое сообщение со слов "Данные для доставки"'
+        )
     else:
         await message.answer(text='Ваша корзина пуста')
+
+
+# @dp.message(F.text.lower().startswith('данные для доставки'))
+# async def get_post_data_and_make_order(message: types.Message):
+    # post_data = message.text
+    # check_post_data = post_data.split()[3:]
+    #
+    # if check_post_data:
+    #     post_data = ' '.join(check_post_data)
+    #     cart_good_list = await check_cart(message)
+    #
+    #     if cart_good_list is not None:
+            # cursor, conn = await connect_to_db()
+            # cursor.execute(
+            #     f"SELECT ccg.id, ccg.quantity, gg.name, gg.price, gg.quantity FROM public.cart_cartgood ccg "
+            #     f"JOIN public.goods_good gg ON ccg.good_id = gg.id WHERE ccg.cart_id = {cart_id}")
+            # user_cart_good_records = cursor.fetchall()
+            # await close_db(cursor, conn)
+    #     else:
+    #         await message.answer(text='Ваша корзина пуста')
+    #
+    # else:
+    #     await message.answer(text='Данные для доставки не были введены')
 
 
 @dp.callback_query(F.data.startswith("Удалить"))
@@ -191,19 +222,52 @@ async def delete_cart_good(callback: types.CallbackQuery):
     await cart(callback.message)
 
 
+@dp.message(F.text.lower() == "faq")
+async def faq(message: types.Message):
+    cursor, conn = await connect_to_db()
+    cursor.execute(f"SELECT id, question, answer FROM public.faq_faq")
+    records = cursor.fetchall()
+    await close_db(cursor, conn)
 
-# @dp.message(F.text.lower() == "faq")
-# async def faq(message: types.Message):
-#     pass
+    if len(records) == 0:
+        await message.answer(text="Раздела FAQ пока не существует :(")
+    else:
+        buttons_list = []
+
+        for item in records:
+            question = item[1]
+            answer_id = item[0]
+
+            question_button = [types.InlineKeyboardButton(
+                text=question,
+                callback_data=f"Ответ {str(answer_id)}"
+            )]
+            buttons_list.append(question_button)
+        kb = types.InlineKeyboardMarkup(inline_keyboard=buttons_list)
+        await message.answer(text='Вот список частозадаваемых вопросов:', reply_markup=kb)
+
+
+@dp.callback_query(F.data.startswith("Ответ"))
+async def get_faq_answer(callback: types.CallbackQuery):
+    answer_id = callback.data.split()[1]
+    cursor, conn = await connect_to_db()
+    cursor.execute(f"SELECT question, answer FROM public.faq_faq WHERE id = {answer_id}")
+    record = cursor.fetchall()
+    await close_db(cursor, conn)
+    question = record[0][0]
+    answer = record[0][1]
+    reply_message = f'Вот ответ на вопрос {question}: {answer}'
+    await callback.message.answer(text=reply_message)
+
 
 
 async def categories(message: types.Message):
     cursor, conn = await connect_to_db()
     cursor.execute('SELECT id, name FROM public.categories_category')
     records = cursor.fetchall()
+    await close_db(cursor, conn)
     if len(records) == 0:
         await message.answer(text="Категорий пока не существует :(")
-    await close_db(cursor, conn)
 
     buttons_list = []
     for item in records:
@@ -224,10 +288,11 @@ async def subcategories(callback: types.CallbackQuery):
     cursor, conn = await connect_to_db()
     cursor.execute(f'SELECT id, name FROM public.subcategories_subcategory WHERE category_id = {category_id}')
     records = cursor.fetchall()
+    await close_db(cursor, conn)
+
     if len(records) == 0:
         await callback.message.answer(text="Подкатегорий в выбранной категории пока не существует, выберите другую")
         await categories(callback.message)
-    await close_db(cursor, conn)
 
     buttons_list = []
     for item in records:
@@ -247,14 +312,16 @@ async def goods(callback: types.CallbackQuery, number: int=0, good_id: int=0):
     subcategory_id = int(callback.data.split()[1])
     cursor, conn = await connect_to_db()
     if number == 0 and good_id == 0:
-        cursor.execute(f'SELECT id, description, image, quantity FROM public.goods_good WHERE subcategory_id = {subcategory_id} AND quantity != 0')
+        cursor.execute(f'SELECT id, description, image, quantity FROM public.goods_good '
+                       f'WHERE subcategory_id = {subcategory_id} AND quantity != 0')
         records = cursor.fetchall()
         if len(records) == 0:
             await callback.message.answer(text="Товаров в выбранной подкатегории пока не существует ,выберите другую")
             await categories(callback.message)
     else:
         cursor.execute(
-            f'SELECT id, description, image, quantity FROM public.goods_good WHERE id = {good_id} AND quantity >= {number}')
+            f'SELECT id, description, image, quantity FROM public.goods_good '
+            f'WHERE id = {good_id} AND quantity >= {number}')
         records = cursor.fetchall()
         if len(records) == 0:
             await callback.message.answer(text="Вы пытаетесь добавить больше, чем у нас есть в наличии")
@@ -282,10 +349,19 @@ async def goods(callback: types.CallbackQuery, number: int=0, good_id: int=0):
         image = FSInputFile(f"{DJANGO_PROJECT_MEDIA_ROOT}{item[2]}")
 
         if number == 0 and good_id == 0:
-            await bot.send_photo(chat_id=callback.message.chat.id, photo=image, caption=item[1], reply_markup=kb)
+            await bot.send_photo(
+                chat_id=callback.message.chat.id,
+                photo=image,
+                caption=f'{item[1]}. В наличии: {item[3]}',
+                reply_markup=kb
+            )
         else:
             try:
-                await bot.edit_message_reply_markup(reply_markup=kb, message_id= callback.message.message_id, chat_id=callback.message.chat.id)
+                await bot.edit_message_reply_markup(
+                    reply_markup=kb,
+                    message_id= callback.message.message_id,
+                    chat_id=callback.message.chat.id
+                )
             except TelegramBadRequest:
                 pass
 
