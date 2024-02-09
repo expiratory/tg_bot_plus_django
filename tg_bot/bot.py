@@ -7,13 +7,14 @@ from os import getenv
 from dotenv import load_dotenv, find_dotenv
 from aiogram.utils.keyboard import InlineKeyboardMarkup, InlineKeyboardButton
 import psycopg2
+from aiogram.exceptions import TelegramBadRequest
 
 load_dotenv(find_dotenv())
 
 DJANGO_PROJECT_MEDIA_ROOT = getenv('DJANGO_PROJECT_MEDIA_ROOT')
 
 
-def connect_to_db():
+async def connect_to_db():
     conn = psycopg2.connect(
         dbname=getenv('POSTGRES_DB'),
         user=getenv('POSTGRES_USER'),
@@ -24,7 +25,7 @@ def connect_to_db():
     return cursor, conn
 
 
-def close_db(cursor, conn):
+async def close_db(cursor, conn):
     cursor.close()
     conn.close()
 
@@ -42,6 +43,7 @@ router = Router()
 @dp.message(F.text.lower() == "проверить подписку")
 async def check_subscription(message: types.Message):
     chat_id = getenv('CHAT_ID')
+    chat_name = getenv('CHAT_NAME')
     user_id = message.from_user.id
 
     try:
@@ -50,7 +52,7 @@ async def check_subscription(message: types.Message):
             await message.answer("Вы подписаны на группу!")
             await menu(message)
         else:
-            await message.answer("Вы не подписаны на группу. Пожалуйста, подпишитесь на @chat_name.")
+            await message.answer(f"Вы не подписаны на группу. Пожалуйста, подпишитесь на {chat_name}")
             kb = [
                 [types.KeyboardButton(text="Проверить подписку")]
             ]
@@ -102,10 +104,12 @@ async def catalog(message: types.Message):
 
 
 async def categories(message: types.Message):
-    cursor, conn = connect_to_db()
+    cursor, conn = await connect_to_db()
     cursor.execute('SELECT id, name FROM public.categories_category')
     records = cursor.fetchall()
-    close_db(cursor, conn)
+    if len(records) == 0:
+        await message.answer(text="Категорий пока не существует :(")
+    await close_db(cursor, conn)
 
     buttons_list = []
     for item in records:
@@ -123,10 +127,13 @@ async def categories(message: types.Message):
 @dp.callback_query(F.data.startswith("Категория"))
 async def subcategories(callback: types.CallbackQuery):
     category_id = int(callback.data.split()[1])
-    cursor, conn = connect_to_db()
+    cursor, conn = await connect_to_db()
     cursor.execute(f'SELECT id, name FROM public.subcategories_subcategory WHERE category_id = {category_id}')
     records = cursor.fetchall()
-    close_db(cursor, conn)
+    if len(records) == 0:
+        await callback.message.answer(text="Подкатегорий в выбранной категории пока не существует, выберите другую")
+        await categories(callback.message)
+    await close_db(cursor, conn)
 
     buttons_list = []
     for item in records:
@@ -142,21 +149,84 @@ async def subcategories(callback: types.CallbackQuery):
 
 
 @dp.callback_query(F.data.startswith("Подкатегория"))
-async def goods(callback: types.CallbackQuery):
+async def goods(callback: types.CallbackQuery, number: int=0, good_id: int=0):
     subcategory_id = int(callback.data.split()[1])
-    cursor, conn = connect_to_db()
-    cursor.execute(f'SELECT id, description, image FROM public.goods_good WHERE subcategory_id = {subcategory_id} AND quantity != 0')
-    records = cursor.fetchall()
-    close_db(cursor, conn)
+    cursor, conn = await connect_to_db()
+    if number == 0 and good_id == 0:
+        cursor.execute(f'SELECT id, description, image, quantity FROM public.goods_good WHERE subcategory_id = {subcategory_id} AND quantity != 0')
+        records = cursor.fetchall()
+        if len(records) == 0:
+            await callback.message.answer(text="Товаров в выбранной подкатегории пока не существует ,выберите другую")
+            await categories(callback.message)
+    else:
+        cursor.execute(
+            f'SELECT id, description, image, quantity FROM public.goods_good WHERE id = {good_id} AND quantity >= {number}')
+        records = cursor.fetchall()
+        if len(records) == 0:
+            await callback.message.answer(text="Вы пытаетесь добавить больше, чем у нас есть в наличии")
+            await categories(callback.message)
+    await close_db(cursor, conn)
 
     for item in records:
-        button = [[types.InlineKeyboardButton(
+        quantity = []
+        buttons_list = []
+        minus = types.InlineKeyboardButton(text="➖", callback_data=f'Минус {item[0]} {number if number else 1}')
+        sum = types.InlineKeyboardButton(
+            text=f"{number if number else 1}", callback_data=f'Количество {item[0]} {number if number else 1}'
+        )
+        plus = types.InlineKeyboardButton(text=" ➕", callback_data=f'Плюс {item[0]} {number if number else 1}')
+        quantity.append(minus)
+        quantity.append(sum)
+        quantity.append(plus)
+        cart = [types.InlineKeyboardButton(
             text="Добавить в корзину",
-            callback_data=f"Товар {item[0]}"
-        )]]
-        kb = types.InlineKeyboardMarkup(inline_keyboard=button)
+            callback_data=f"Товар {item[0]} {number}"
+        )]
+        buttons_list.append(quantity)
+        buttons_list.append(cart)
+        kb = types.InlineKeyboardMarkup(inline_keyboard=buttons_list)
         image = FSInputFile(f"{DJANGO_PROJECT_MEDIA_ROOT}{item[2]}")
-        await bot.send_photo(chat_id=callback.message.chat.id, photo=image, caption=item[1], reply_markup=kb)
+
+        if number == 0 and good_id == 0:
+            await bot.send_photo(chat_id=callback.message.chat.id, photo=image, caption=item[1], reply_markup=kb)
+        else:
+            try:
+                await bot.edit_message_reply_markup(reply_markup=kb, message_id= callback.message.message_id, chat_id=callback.message.chat.id)
+            except TelegramBadRequest:
+                pass
+
+
+@dp.callback_query(F.data.startswith("Минус"))
+async def minus(callback: types.CallbackQuery):
+    number = int(callback.data.split()[2]) - 1 if int(callback.data.split()[2]) > 0 else 1
+    good_id = int(callback.data.split()[1])
+    await goods(callback, number, good_id)
+
+
+@dp.callback_query(F.data.startswith("Плюс"))
+async def plus(callback: types.CallbackQuery):
+    number = int(callback.data.split()[2]) + 1
+    good_id = int(callback.data.split()[1])
+    await goods(callback, number, good_id)
+
+
+@dp.callback_query(F.data.startswith("Товар"))
+async def add_to_cart(callback: types.CallbackQuery):
+    good_id = int(callback.data.split()[1])
+    quantity = int(callback.data.split()[2])
+    user_name = callback.message.chat.username
+
+    cursor, conn = await connect_to_db()
+    cursor.execute(
+        f"SELECT * FROM public.user_user WHERE user_tg_nickname = '{user_name}'")
+    records = cursor.fetchall()
+
+    if len(records) == 0:
+        print('мы тут')
+        cursor.execute(
+            f"INSERT INTO public.user_user (user_tg_nickname) values('{user_name}')"
+        )
+    await close_db(cursor, conn)
 
 
 async def main():
