@@ -171,11 +171,18 @@ async def cart(message: types.Message):
         position = 1
         cart_sum = 0
         for item in cart_good_list:
-            cart_sum += item[4]
-            info_for_reply = (f"{item[2]} стоимостью {item[3]} количеством {item[1]} - итого {item[4]}. "
-                              f"У нас в наличии: {item[5]}")
+            cart_good_id = item[0]
+            result_price = item[4]
+            good_name = item[2]
+            good_price = item[3]
+            cart_good_quantity = item[1]
+            good_quantity = item[5]
+
+            cart_sum += result_price
+            info_for_reply = (f"{good_name} стоимостью {good_price} количеством {cart_good_quantity} - итого {result_price}. "
+                              f"У нас в наличии: {good_quantity}")
             delete_cart_good = types.InlineKeyboardButton(
-                text="Удалить из корзины", callback_data=f'Удалить {item[0]}'
+                text="Удалить из корзины", callback_data=f'Удалить {cart_good_id}'
             )
             buttons_list.append([delete_cart_good])
             kb = types.InlineKeyboardMarkup(inline_keyboard=[[delete_cart_good]])
@@ -202,8 +209,9 @@ async def get_post_data_and_make_order(message: types.Message):
             check_quantity = True
 
             for item in cart_good_list:
+                good_id = item[6]
                 cursor, conn = await connect_to_db()
-                cursor.execute(f'SELECT quantity FROM public.goods_good WHERE id = {item[6]}')
+                cursor.execute(f'SELECT quantity FROM public.goods_good WHERE id = {good_id}')
                 record = cursor.fetchall()
                 await close_db(cursor, conn)
 
@@ -240,10 +248,13 @@ async def get_post_data_and_make_order(message: types.Message):
                 await close_db(cursor, conn)
 
                 for item in cart_good_list:
+                    cart_good_quantity = item[1]
+                    good_id = item[6]
+
                     cursor, conn = await connect_to_db()
                     cursor.execute(
                         f"INSERT INTO public.orders_orderitem (quantity, good_id, order_id) values "
-                        f"('{item[5]}', {item[6]}, '{user_order_id}')")
+                        f"('{cart_good_quantity}', {good_id}, '{user_order_id}')")
                     conn.commit()
                     await close_db(cursor, conn)
 
@@ -318,9 +329,11 @@ async def categories(message: types.Message):
 
     buttons_list = []
     for item in records:
+        category_id = item[0]
+        category_name = item[1]
         buttons_list.append([types.InlineKeyboardButton(
-            text=item[1],
-            callback_data=f'Категория {str(item[0])}')]
+            text=category_name,
+            callback_data=f'Категория {str(category_id)}')]
         )
     kb = types.InlineKeyboardMarkup(inline_keyboard=buttons_list)
     await message.answer(
@@ -343,9 +356,11 @@ async def subcategories(callback: types.CallbackQuery):
 
     buttons_list = []
     for item in records:
+        subcategory_id = item[0]
+        subcategory_name = item[1]
         buttons_list.append([types.InlineKeyboardButton(
-            text=item[1],
-            callback_data=f'Подкатегория {str(item[0])}')]
+            text=subcategory_name,
+            callback_data=f'Подкатегория {str(subcategory_id)}')]
         )
     kb = types.InlineKeyboardMarkup(inline_keyboard=buttons_list)
     await callback.message.edit_text(
@@ -376,37 +391,42 @@ async def goods(callback: types.CallbackQuery, number: int=0, good_id: int=0):
     await close_db(cursor, conn)
 
     for item in records:
+        id_good = item[0]
+        good_description = item[1]
+        good_image = item[2]
+        good_quantity = item[3]
+
         quantity = []
         buttons_list = []
-        minus = types.InlineKeyboardButton(text="➖", callback_data=f'Минус {item[0]} {number if number else 1}')
+        minus = types.InlineKeyboardButton(text="➖", callback_data=f'Минус {id_good} {number if number else 1}')
         sum = types.InlineKeyboardButton(
-            text=f"{number if number else 1}", callback_data=f'Количество {item[0]} {number if number else 1}'
+            text=f"{number if number else 1}", callback_data=f'Количество {id_good} {number if number else 1}'
         )
-        plus = types.InlineKeyboardButton(text=" ➕", callback_data=f'Плюс {item[0]} {number if number else 1}')
+        plus = types.InlineKeyboardButton(text=" ➕", callback_data=f'Плюс {id_good} {number if number else 1}')
         quantity.append(minus)
         quantity.append(sum)
         quantity.append(plus)
         cart = [types.InlineKeyboardButton(
             text="Добавить в корзину",
-            callback_data=f"Товар {item[0]} {number}"
+            callback_data=f"Товар {id_good} {number}"
         )]
         buttons_list.append(quantity)
         buttons_list.append(cart)
         kb = types.InlineKeyboardMarkup(inline_keyboard=buttons_list)
-        image = FSInputFile(f"{DJANGO_PROJECT_MEDIA_ROOT}{item[2]}")
+        image = FSInputFile(f"{DJANGO_PROJECT_MEDIA_ROOT}{good_image}")
 
         if number == 0 and good_id == 0:
             await bot.send_photo(
                 chat_id=callback.message.chat.id,
                 photo=image,
-                caption=f'{item[1]}. В наличии: {item[3]}',
+                caption=f'{good_description}. В наличии: {good_quantity}',
                 reply_markup=kb
             )
         else:
             try:
                 await bot.edit_message_reply_markup(
                     reply_markup=kb,
-                    message_id= callback.message.message_id,
+                    message_id=callback.message.message_id,
                     chat_id=callback.message.chat.id
                 )
             except TelegramBadRequest:
