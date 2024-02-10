@@ -35,7 +35,6 @@ class Order(models.Model):
         return orders_dict
 
 
-
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     good = models.ForeignKey(Good, on_delete=models.CASCADE)
