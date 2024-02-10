@@ -66,6 +66,7 @@ async def get_post_data_and_make_order(message: types.Message):
                     good_id = item[6]
                     good_quantity = item[5]
                     good_price = item[3]
+                    cart_good_id = item[0]
 
                     order_item_price = good_price * cart_good_quantity
                     if balance < order_item_price:
@@ -86,9 +87,12 @@ async def get_post_data_and_make_order(message: types.Message):
                             f"UPDATE public.user_user SET balance = {updated_balance} WHERE id = {bd_user_id}"
                         )
                         conn.commit()
+                        cursor.execute(
+                            f"DELETE FROM public.cart_cartgood WHERE id = {cart_good_id}"
+                        )
+                        conn.commit()
                         await close_db(cursor, conn)
-
-                await message.answer(text='Заказ успешно создан!')
+                        await message.answer(text='Заказ успешно создан!')
         else:
             await message.answer(text='Ваша корзина пуста')
 
