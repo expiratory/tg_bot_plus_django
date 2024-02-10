@@ -1,5 +1,7 @@
 import asyncio
 import logging
+from datetime import datetime
+
 from aiogram import Bot, Dispatcher, Router, F, types
 from aiogram.filters.command import Command
 from aiogram.types import FSInputFile
@@ -136,8 +138,8 @@ async def check_cart(message: types.Message):
 
     cursor, conn = await connect_to_db()
     cursor.execute(
-        f"SELECT ccg.id, ccg.quantity, gg.name, gg.price, gg.quantity FROM public.cart_cartgood ccg JOIN "
-        f"public.goods_good gg ON ccg.good_id = gg.id WHERE ccg.cart_id = {cart_id}")
+        f"SELECT ccg.id, ccg.quantity, gg.name, gg.price, gg.quantity, gg.id, ccg.cart_id FROM public.cart_cartgood "
+        f"ccg JOIN public.goods_good gg ON ccg.good_id = gg.id WHERE ccg.cart_id = {cart_id}")
     user_cart_good_records = cursor.fetchall()
     await close_db(cursor, conn)
 
@@ -151,9 +153,11 @@ async def check_cart(message: types.Message):
             good_name = item[2]
             good_price = item[3]
             good_quantity = item[4]
+            good_id = item[5]
+            cart_id = item[6]
             result_price = cart_good_quantity * good_price
             cart_good_list.append(
-                [cart_good_id, cart_good_quantity, good_name, good_price, result_price, good_quantity])
+                [cart_good_id, cart_good_quantity, good_name, good_price, result_price, good_quantity, good_id, cart_id])
 
     return cart_good_list
 
@@ -185,27 +189,70 @@ async def cart(message: types.Message):
         await message.answer(text='Ваша корзина пуста')
 
 
-# @dp.message(F.text.lower().startswith('данные для доставки'))
-# async def get_post_data_and_make_order(message: types.Message):
-    # post_data = message.text
-    # check_post_data = post_data.split()[3:]
-    #
-    # if check_post_data:
-    #     post_data = ' '.join(check_post_data)
-    #     cart_good_list = await check_cart(message)
-    #
-    #     if cart_good_list is not None:
-            # cursor, conn = await connect_to_db()
-            # cursor.execute(
-            #     f"SELECT ccg.id, ccg.quantity, gg.name, gg.price, gg.quantity FROM public.cart_cartgood ccg "
-            #     f"JOIN public.goods_good gg ON ccg.good_id = gg.id WHERE ccg.cart_id = {cart_id}")
-            # user_cart_good_records = cursor.fetchall()
-            # await close_db(cursor, conn)
-    #     else:
-    #         await message.answer(text='Ваша корзина пуста')
-    #
-    # else:
-    #     await message.answer(text='Данные для доставки не были введены')
+@dp.message(F.text.lower().startswith('данные для доставки'))
+async def get_post_data_and_make_order(message: types.Message):
+    post_data = message.text
+    check_post_data = post_data.split()[3:]
+
+    if check_post_data:
+        post_data = ' '.join(check_post_data)
+        cart_good_list = await check_cart(message)
+
+        if cart_good_list is not None:
+            check_quantity = True
+
+            for item in cart_good_list:
+                cursor, conn = await connect_to_db()
+                cursor.execute(f'SELECT quantity FROM public.goods_good WHERE id = {item[6]}')
+                record = cursor.fetchall()
+                await close_db(cursor, conn)
+
+                real_quantity = record[0][0]
+
+                if real_quantity < item[6]:
+                    await message.answer(text=f'Товара {item[2]} осталось меньше, чем у вас в корзине, сейчас в '
+                                              f'наличии {real_quantity} шт. Перейдите в корзину, удалите товар и '
+                                              f'закажите возможное количество.')
+                    check_quantity = False
+
+            if check_quantity:
+                cart_id = cart_good_list[0][7]
+
+                cursor, conn = await connect_to_db()
+                cursor.execute(f'SELECT user_id FROM public.cart_cart WHERE id = {cart_id}')
+                record = cursor.fetchall()
+                await close_db(cursor, conn)
+
+                bd_user_id = record[0][0]
+                str_time_now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                time_now_for_db = str_time_now + '+00'
+
+                cursor, conn = await connect_to_db()
+                cursor.execute(
+                    f"INSERT INTO public.orders_order (created_at, user_id, post_data) values "
+                    f"('{str_time_now}', {bd_user_id}, '{post_data}')")
+                conn.commit()
+                cursor.execute(
+                    f"SELECT id FROM public.orders_order WHERE created_at = '{time_now_for_db}' AND "
+                    f"user_id = '{bd_user_id}'"
+                )
+                user_order_id = cursor.fetchall()[0][0]
+                await close_db(cursor, conn)
+
+                for item in cart_good_list:
+                    cursor, conn = await connect_to_db()
+                    cursor.execute(
+                        f"INSERT INTO public.orders_orderitem (quantity, good_id, order_id) values "
+                        f"('{item[5]}', {item[6]}, '{user_order_id}')")
+                    conn.commit()
+                    await close_db(cursor, conn)
+
+                await message.answer(text='Заказ успешно создан!')
+        else:
+            await message.answer(text='Ваша корзина пуста')
+
+    else:
+        await message.answer(text='Данные для доставки не были введены')
 
 
 @dp.callback_query(F.data.startswith("Удалить"))
