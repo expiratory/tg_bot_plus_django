@@ -22,12 +22,14 @@ class Order(models.Model):
             order_dict = {}
             order_dict["Order ID"] = order.id
             order_dict["User"] = order.user.user_tg_nickname
-            order_dict["Created At"] = order.created_at
+            order_dict["Created At"] = order.created_at.strftime('%Y-%m-%d %H:%M:%S')
             order_dict["Post Data"] = order.post_data
             for order_item in order.orderitem_set.all():
-                order_dict["Order Item ID"] = order_item.id
-                order_dict["Good"] = order_item.good.name
-                order_dict["Quantity"] = order_item.quantity
+                order_item_dict = {}
+                order_item_dict["Order Item ID"] = order_item.id
+                order_item_dict["Good"] = order_item.good.name
+                order_item_dict["Quantity"] = order_item.quantity
+                order_dict[order_item.id] = order_item_dict
             orders_dict[order.id] = order_dict
 
         return orders_dict
