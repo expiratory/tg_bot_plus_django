@@ -3,7 +3,14 @@ import logging
 from aiogram import Bot, Dispatcher
 from os import getenv
 from dotenv import load_dotenv, find_dotenv
-import start_menu, goods, cart, categories, subcategories, faq, orders
+import start_menu
+import goods
+import cart
+import categories
+import subcategories
+import faq
+import orders
+import user_balance
 
 
 load_dotenv(find_dotenv())
@@ -22,7 +29,8 @@ async def main():
         subcategories.router,
         categories.router,
         faq.router,
-        orders.router
+        orders.router,
+        user_balance.router
     )
     await dp.start_polling(bot)
 

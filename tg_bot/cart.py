@@ -15,7 +15,7 @@ async def get_or_create_user_cart(user_name):
 
     if len(user_records) == 0:
         cursor.execute(
-            f"INSERT INTO public.user_user (user_tg_nickname) values ('{user_name}')"
+            f"INSERT INTO public.user_user (user_tg_nickname, balance) values ('{user_name}', 0)"
         )
         conn.commit()
         cursor.execute(

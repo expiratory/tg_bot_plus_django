@@ -56,18 +56,37 @@ async def get_post_data_and_make_order(message: types.Message):
                     f"user_id = '{bd_user_id}'"
                 )
                 user_order_id = cursor.fetchall()[0][0]
+                cursor.execute(f"SELECT balance FROM public.user_user WHERE id = {bd_user_id}")
+                records = cursor.fetchall()
+                balance = records[0][0]
                 await close_db(cursor, conn)
 
                 for item in cart_good_list:
                     cart_good_quantity = item[1]
                     good_id = item[6]
+                    good_quantity = item[5]
+                    good_price = item[3]
 
-                    cursor, conn = await connect_to_db()
-                    cursor.execute(
-                        f"INSERT INTO public.orders_orderitem (quantity, good_id, order_id) values "
-                        f"('{cart_good_quantity}', {good_id}, '{user_order_id}')")
-                    conn.commit()
-                    await close_db(cursor, conn)
+                    order_item_price = good_price * cart_good_quantity
+                    if balance < order_item_price:
+                        await message.answer(text='У вас недостаточно денег для оплаты этого товара :(')
+                    else:
+                        cursor, conn = await connect_to_db()
+                        cursor.execute(
+                            f"INSERT INTO public.orders_orderitem (quantity, good_id, order_id) values "
+                            f"('{cart_good_quantity}', {good_id}, '{user_order_id}')")
+                        conn.commit()
+                        new_quantity = good_quantity - cart_good_quantity
+                        cursor.execute(
+                            f"UPDATE public.goods_good SET quantity = {new_quantity}  WHERE id = {good_id}"
+                        )
+                        conn.commit()
+                        updated_balance = balance - order_item_price
+                        cursor.execute(
+                            f"UPDATE public.user_user SET balance = {updated_balance} WHERE id = {bd_user_id}"
+                        )
+                        conn.commit()
+                        await close_db(cursor, conn)
 
                 await message.answer(text='Заказ успешно создан!')
         else:

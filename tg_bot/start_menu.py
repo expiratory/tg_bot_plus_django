@@ -49,7 +49,11 @@ async def menu(message: types.Message):
             types.KeyboardButton(text="Каталог"),
             types.KeyboardButton(text="Корзина"),
             types.KeyboardButton(text="FAQ")
-         ]
+        ],
+        [
+            types.KeyboardButton(text="Пополнить баланс"),
+            types.KeyboardButton(text="Проверить баланс")
+        ]
     ]
     keyboard = types.ReplyKeyboardMarkup(
         keyboard=kb,
