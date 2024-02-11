@@ -131,7 +131,24 @@ async def add_to_cart(callback: types.CallbackQuery):
 
     cursor, conn = await connect_to_db()
     cursor.execute(
-        f"INSERT INTO public.cart_cartgood (quantity, cart_id, good_id) values ({quantity}, {cart_id}, {good_id})"
+        f"SELECT id, quantity FROM public.cart_cartgood WHERE cart_id = {cart_id} AND good_id = {good_id}"
     )
-    conn.commit()
+    record = cursor.fetchone()
     await close_db(cursor, conn)
+
+    if record is not None:
+        cartgood_id = record[0]
+        previous_quantity = record[1]
+        cursor, conn = await connect_to_db()
+        cursor.execute(
+            f"UPDATE public.cart_cartgood SET quantity = {previous_quantity + quantity} WHERE id = {cartgood_id}"
+        )
+        conn.commit()
+        await close_db(cursor, conn)
+    else:
+        cursor, conn = await connect_to_db()
+        cursor.execute(
+            f"INSERT INTO public.cart_cartgood (quantity, cart_id, good_id) values ({quantity}, {cart_id}, {good_id})"
+        )
+        conn.commit()
+        await close_db(cursor, conn)
