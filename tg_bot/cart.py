@@ -59,8 +59,8 @@ async def cart(message: types.Message):
             good_quantity = item[5]
 
             cart_sum += result_price
-            info_for_reply = (f"{good_name} стоимостью {good_price} количеством {cart_good_quantity} - итого {result_price}. "
-                              f"У нас в наличии: {good_quantity}")
+            info_for_reply = (f"{good_name} стоимостью {good_price} руб. количеством {cart_good_quantity} шт. - "
+                              f"итого {result_price} руб. У нас в наличии: {good_quantity} шт")
             delete_cart_good = types.InlineKeyboardButton(
                 text="Удалить из корзины", callback_data=f'Удалить {cart_good_id}'
             )
@@ -69,7 +69,7 @@ async def cart(message: types.Message):
             await message.answer(text=f'Позиция {position}: {info_for_reply}', reply_markup=kb)
             position += 1
         await message.answer(
-            text=f'Сумма корзины: {cart_sum}. Если вы готовы сделать заказ, введите данные для доставки. '
+            text=f'Сумма корзины: {cart_sum} руб. Если вы готовы сделать заказ, введите данные для доставки. '
                  f'ОБЯЗАТЕЛЬНО начните свое сообщение со слов "Данные для доставки"'
         )
     else:

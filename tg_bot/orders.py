@@ -33,7 +33,7 @@ async def get_post_data_and_make_order(message: types.Message):
 
                 if real_quantity < cart_good_quantity:
                     await message.answer(text=f'Товара {good_name} осталось меньше, чем у вас в корзине '
-                                              f'({cart_good_quantity}), сейчас в наличии {real_quantity} шт. Перейдите '
+                                              f'({cart_good_quantity} шт.), сейчас в наличии {real_quantity} шт. Перейдите '
                                               f'в корзину, удалите товар и закажите возможное количество.')
                     check_quantity = False
 
@@ -78,7 +78,7 @@ async def get_post_data_and_make_order(message: types.Message):
                     order_item_price = good_price * cart_good_quantity
                     if balance < order_item_price:
                         await message.answer(text=f'У вас недостаточно денег для оплаты этого товара - {good_name} '
-                                                  f'в количестве {cart_good_quantity} :(')
+                                                  f'в количестве {cart_good_quantity} шт. :(')
                     else:
                         cursor, conn = await connect_to_db()
                         cursor.execute(
@@ -106,7 +106,7 @@ async def get_post_data_and_make_order(message: types.Message):
                         await close_db(cursor, conn)
                         await message.answer(text=f'Успешно оплачена позиция с номером {order_item_id} заказа номер '
                                                   f'{user_order_id}! Вы заказали {good_name} в количестве '
-                                                  f'{cart_good_quantity}')
+                                                  f'{cart_good_quantity} шт.')
                         order_item_list.append([good_name, f'{cart_good_quantity} шт.', f'{good_price} руб.'])
                         order_item_counter += 1
 
