@@ -2,6 +2,7 @@ from datetime import datetime
 from aiogram import types, F, Router
 from db import connect_to_db, close_db
 from cart import check_cart
+from email_sender import send_email_for_admin
 
 
 router = Router()
@@ -21,17 +22,19 @@ async def get_post_data_and_make_order(message: types.Message):
 
             for item in cart_good_list:
                 good_id = item[6]
+                good_name = item[2]
                 cursor, conn = await connect_to_db()
                 cursor.execute(f'SELECT quantity FROM public.goods_good WHERE id = {good_id}')
                 record = cursor.fetchall()
                 await close_db(cursor, conn)
 
                 real_quantity = record[0][0]
+                cart_good_quantity = item[1]
 
-                if real_quantity < item[6]:
-                    await message.answer(text=f'Товара {item[2]} осталось меньше, чем у вас в корзине, сейчас в '
-                                              f'наличии {real_quantity} шт. Перейдите в корзину, удалите товар и '
-                                              f'закажите возможное количество.')
+                if real_quantity < cart_good_quantity:
+                    await message.answer(text=f'Товара {good_name} осталось меньше, чем у вас в корзине '
+                                              f'({cart_good_quantity}), сейчас в наличии {real_quantity} шт. Перейдите '
+                                              f'в корзину, удалите товар и закажите возможное количество.')
                     check_quantity = False
 
             if check_quantity:
@@ -64,7 +67,6 @@ async def get_post_data_and_make_order(message: types.Message):
                 order_item_counter = 0
 
                 for item in cart_good_list:
-                    cart_good_quantity = item[1]
                     good_id = item[6]
                     good_quantity = item[5]
                     good_price = item[3]
@@ -72,7 +74,8 @@ async def get_post_data_and_make_order(message: types.Message):
 
                     order_item_price = good_price * cart_good_quantity
                     if balance < order_item_price:
-                        await message.answer(text='У вас недостаточно денег для оплаты этого товара :(')
+                        await message.answer(text=f'У вас недостаточно денег для оплаты этого товара - {good_name} '
+                                                  f'в количестве {cart_good_quantity} :(')
                     else:
                         cursor, conn = await connect_to_db()
                         cursor.execute(
@@ -99,7 +102,8 @@ async def get_post_data_and_make_order(message: types.Message):
                         conn.commit()
                         await close_db(cursor, conn)
                         await message.answer(text=f'Успешно оплачена позиция с номером {order_item_id} заказа номер '
-                                                  f'{user_order_id}!')
+                                                  f'{user_order_id}! Вы заказали {good_name} в количестве '
+                                                  f'{cart_good_quantity}')
                         order_item_counter += 1
 
                 if order_item_counter == 0:
@@ -111,6 +115,8 @@ async def get_post_data_and_make_order(message: types.Message):
                     await close_db(cursor, conn)
                     await message.answer(text='К сожалению, у вас недостаточно денег для оплаты позиций вашего заказа. '
                                               'Пополните баланс и попробуйте снова.')
+                else:
+                    await send_email_for_admin(bd_user_id, user_order_id, time_now_for_db)
         else:
             await message.answer(text='Ваша корзина пуста')
 

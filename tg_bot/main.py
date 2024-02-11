@@ -11,6 +11,7 @@ import subcategories
 import faq
 import orders
 import user_balance
+import email_sender
 
 
 load_dotenv(find_dotenv())
@@ -30,7 +31,8 @@ async def main():
         categories.router,
         faq.router,
         orders.router,
-        user_balance.router
+        user_balance.router,
+        email_sender.router
     )
     await dp.start_polling(bot)
 
