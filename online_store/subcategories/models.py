@@ -9,3 +9,6 @@ class Subcategory(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_category_name(self):
+        return self.category.name

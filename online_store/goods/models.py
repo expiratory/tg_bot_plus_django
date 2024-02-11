@@ -15,3 +15,9 @@ class Good(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_category_name(self):
+        return self.category.name
+
+    def get_subcategory_name(self):
+        return self.subcategory.name

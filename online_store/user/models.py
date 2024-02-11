@@ -6,4 +6,4 @@ class User(models.Model):
     balance = models.PositiveIntegerField(default=0)
 
     def __str__(self):
-        return str(self.pk)
+        return str(self.user_tg_nickname)

@@ -11,6 +11,9 @@ class Cart(models.Model):
     def __str__(self):
         return str(self.pk)
 
+    def get_user_tg_nickname(self):
+        return self.user.user_tg_nickname
+
 
 class CartGood(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
@@ -19,3 +22,12 @@ class CartGood(models.Model):
 
     def __str__(self):
         return str(self.pk)
+
+    def get_user_tg_nickname(self):
+        return self.cart.get_user_tg_nickname()
+
+    def get_good_name(self):
+        return self.good.name
+
+    def get_quantity(self):
+        return self.quantity

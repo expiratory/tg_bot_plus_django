@@ -12,6 +12,9 @@ class Order(models.Model):
     def __str__(self):
         return str(self.pk)
 
+    def get_user_tg_nickname(self):
+        return self.user.user_tg_nickname
+
     @staticmethod
     def get_qs_as_dict():
         qs = Order.objects.select_related('user').prefetch_related('orderitem_set__good')
@@ -42,3 +45,9 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return str(self.pk)
+
+    def get_user_tg_nickname(self):
+        return self.order.get_user_tg_nickname()
+
+    def get_good_name(self):
+        return self.good.name

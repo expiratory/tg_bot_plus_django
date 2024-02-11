@@ -65,31 +65,33 @@ async def add_balance(message: types.Message):
 
 @router.pre_checkout_query()
 async def process_pre_checkout_query(pre_checkout_query: PreCheckoutQuery, bot: Bot):
-    await bot.answer_pre_checkout_query(pre_checkout_query.id, ok=True)
+    check = await bot.answer_pre_checkout_query(pre_checkout_query.id, ok=True)
+    print(check)
 
-    user_name = pre_checkout_query.from_user.username
+    if check:
+        user_name = pre_checkout_query.from_user.username
 
-    cursor, conn = await connect_to_db()
-    cursor.execute(f"SELECT balance FROM public.user_user WHERE user_tg_nickname = '{user_name}'")
-    records = cursor.fetchall()
+        cursor, conn = await connect_to_db()
+        cursor.execute(f"SELECT balance FROM public.user_user WHERE user_tg_nickname = '{user_name}'")
+        records = cursor.fetchall()
 
-    if len(records) == 0:
+        if len(records) == 0:
+            cursor.execute(
+                f"INSERT INTO public.user_user (user_tg_nickname, balance) values ('{user_name}', 0)"
+            )
+            conn.commit()
+            balance = 0
+        else:
+            balance = records[0][0]
+
+        total_amount = int(pre_checkout_query.total_amount // 100)
+        updated_balance = balance + total_amount
+
         cursor.execute(
-            f"INSERT INTO public.user_user (user_tg_nickname, balance) values ('{user_name}', 0)"
+            f"UPDATE public.user_user SET balance = {updated_balance} WHERE user_tg_nickname = '{user_name}'"
         )
         conn.commit()
-        balance = 0
-    else:
-        balance = records[0][0]
 
-    total_amount = int(pre_checkout_query.total_amount // 100)
-    updated_balance = balance + total_amount
-
-    cursor.execute(
-        f"UPDATE public.user_user SET balance = {updated_balance} WHERE user_tg_nickname = '{user_name}'"
-    )
-    conn.commit()
-
-    await close_db(cursor, conn)
-    await bot.send_message(text=f'Ваш баланс успешно пополнен на {total_amount} руб. Теперь он составляет '
-                                f'{updated_balance} руб.', chat_id=pre_checkout_query.from_user.id)
+        await close_db(cursor, conn)
+        await bot.send_message(text=f'Ваш баланс успешно пополнен на {total_amount} руб. Теперь он составляет '
+                                    f'{updated_balance} руб.', chat_id=pre_checkout_query.from_user.id)

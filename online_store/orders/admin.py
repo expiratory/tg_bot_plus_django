@@ -28,10 +28,14 @@ export_orders_to_xlsx.short_description = "Export selected orders to XLSX"
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'created_at')
+    list_display = ('id', 'get_user_tg_nickname', 'created_at', 'post_data',)
+    search_fields = ('user__user_tg_nickname',)
+    ordering = ('-created_at',)
     actions = [export_orders_to_xlsx]
 
 
 @admin.register(OrderItem)
 class OrderItemAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('id', 'get_user_tg_nickname', 'get_good_name',)
+    search_fields = ('order__user__user_tg_nickname', 'good__name',)
+    ordering = ('id',)
