@@ -55,7 +55,7 @@ async def goods(callback: types.CallbackQuery, number: int=0, good_id: int=0):
         quantity.append(plus)
         cart = [types.InlineKeyboardButton(
             text="Добавить в корзину",
-            callback_data=f"Товар {id_good} {number}"
+            callback_data=f"Товар {id_good} {number if number else 1}"
         )]
         buttons_list.append(quantity)
         buttons_list.append(cart)

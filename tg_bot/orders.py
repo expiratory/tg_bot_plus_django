@@ -61,6 +61,8 @@ async def get_post_data_and_make_order(message: types.Message):
                 balance = records[0][0]
                 await close_db(cursor, conn)
 
+                order_item_counter = 0
+
                 for item in cart_good_list:
                     cart_good_quantity = item[1]
                     good_id = item[6]
@@ -77,6 +79,10 @@ async def get_post_data_and_make_order(message: types.Message):
                             f"INSERT INTO public.orders_orderitem (quantity, good_id, order_id) values "
                             f"('{cart_good_quantity}', {good_id}, '{user_order_id}')")
                         conn.commit()
+                        cursor.execute(
+                            f"SELECT id FROM public.orders_orderitem WHERE quantity = '{cart_good_quantity}' AND "
+                            f"good_id = {good_id} AND order_id = '{user_order_id}'")
+                        order_item_id = cursor.fetchall()[0][0]
                         new_quantity = good_quantity - cart_good_quantity
                         cursor.execute(
                             f"UPDATE public.goods_good SET quantity = {new_quantity}  WHERE id = {good_id}"
@@ -92,7 +98,19 @@ async def get_post_data_and_make_order(message: types.Message):
                         )
                         conn.commit()
                         await close_db(cursor, conn)
-                        await message.answer(text='Заказ успешно создан!')
+                        await message.answer(text=f'Успешно оплачена позиция с номером {order_item_id} заказа номер '
+                                                  f'{user_order_id}!')
+                        order_item_counter += 1
+
+                if order_item_counter == 0:
+                    cursor, conn = await connect_to_db()
+                    cursor.execute(
+                        f"DELETE FROM public.orders_order WHERE id = {user_order_id}"
+                    )
+                    conn.commit()
+                    await close_db(cursor, conn)
+                    await message.answer(text='К сожалению, у вас недостаточно денег для оплаты позиций вашего заказа. '
+                                              'Пополните баланс и попробуйте снова.')
         else:
             await message.answer(text='Ваша корзина пуста')
 
