@@ -65,12 +65,15 @@ async def get_post_data_and_make_order(message: types.Message):
                 await close_db(cursor, conn)
 
                 order_item_counter = 0
+                order_item_list = []
 
                 for item in cart_good_list:
                     good_id = item[6]
                     good_quantity = item[5]
                     good_price = item[3]
                     cart_good_id = item[0]
+                    cart_good_quantity = item[1]
+                    good_name = item[2]
 
                     order_item_price = good_price * cart_good_quantity
                     if balance < order_item_price:
@@ -104,6 +107,7 @@ async def get_post_data_and_make_order(message: types.Message):
                         await message.answer(text=f'Успешно оплачена позиция с номером {order_item_id} заказа номер '
                                                   f'{user_order_id}! Вы заказали {good_name} в количестве '
                                                   f'{cart_good_quantity}')
+                        order_item_list.append([good_name, f'{cart_good_quantity} шт.', f'{good_price} руб.'])
                         order_item_counter += 1
 
                 if order_item_counter == 0:
@@ -116,7 +120,7 @@ async def get_post_data_and_make_order(message: types.Message):
                     await message.answer(text='К сожалению, у вас недостаточно денег для оплаты позиций вашего заказа. '
                                               'Пополните баланс и попробуйте снова.')
                 else:
-                    await send_email_for_admin(bd_user_id, user_order_id, time_now_for_db)
+                    await send_email_for_admin(bd_user_id, user_order_id, time_now_for_db, order_item_list)
         else:
             await message.answer(text='Ваша корзина пуста')
 
