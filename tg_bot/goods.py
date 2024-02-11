@@ -66,7 +66,7 @@ async def goods(callback: types.CallbackQuery, number: int=0, good_id: int=0):
             await bot.send_photo(
                 chat_id=callback.message.chat.id,
                 photo=image,
-                caption=f'{good_description}. В наличии: {good_quantity}',
+                caption=f'{good_description}. В наличии: {good_quantity} шт.',
                 reply_markup=kb
             )
         else:
